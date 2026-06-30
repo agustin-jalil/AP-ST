@@ -9,23 +9,23 @@ export default function Footer() {
             <h3 className="font-semibold text-sm mb-4">Shop</h3>
             <ul className="space-y-2 text-xs text-gray-600">
               <li>
-                <Link href="#" className="hover:text-black">
-                  Mac
+                <Link href="/categoria/computacion" className="hover:text-black">
+                  Computación
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-black">
-                  iPhone
+                <Link href="/categoria/audio" className="hover:text-black">
+                  Audio
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-black">
-                  iPad
+                <Link href="/categoria/tablets" className="hover:text-black">
+                  Tablets
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-black">
-                  Watch
+                <Link href="/categoria/wearables" className="hover:text-black">
+                  Wearables
                 </Link>
               </li>
             </ul>
@@ -39,7 +39,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-black">
+                <Link href="/tracking" className="hover:text-black">
                   Orders
                 </Link>
               </li>
@@ -92,7 +92,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-300 pt-8">
-          <p className="text-xs text-gray-600 text-center">© 2025 Apple Recreation. Not affiliated with Apple Inc.</p>
+          <p className="text-xs text-gray-600 text-center">© 2025 Nimbus Store. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

@@ -9,9 +9,9 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'TodoApple',
-  description: 'TodoApple',
-  generator: 'TodoApple',
+  title: 'Nimbus Store',
+  description: 'Nimbus Store',
+  generator: 'Nimbus Store',
 }
 
 export default function RootLayout({

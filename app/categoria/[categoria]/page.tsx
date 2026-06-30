@@ -4,8 +4,7 @@ import { CatalogCloserLook } from "@/components/catalog/catalog-closer-look"
 import { CatalogFeatures } from "@/components/catalog/catalog-features"
 import { CatalogFooter } from "@/components/catalog/catalog-footer"
 import { notFound } from "next/navigation"
-import { getCategories, getProductsByCategory, formatPrice } from "@/lib/medusa"
-import type { MedusaProduct } from "@/types/medusa"
+import { getCategories, getCategoryByHandle, getProductsByCategory, formatPrice } from "@/lib/catalog"
 
 interface PageProps {
   params: Promise<{
@@ -16,74 +15,49 @@ interface PageProps {
 export default async function CatalogPage({ params }: PageProps) {
   const { categoria } = await params
 
-  const categories = await getCategories()
-  const category = categories.find((cat) => cat.handle === categoria.toLowerCase())
+  const category = await getCategoryByHandle(categoria)
 
   if (!category) {
     notFound()
   }
 
-  const medusaProducts = await getProductsByCategory(category.id)
+  const categoryProducts = await getProductsByCategory(category.handle)
 
-  const products = medusaProducts.map((product: MedusaProduct, index: number) => {
-    const variant = product.variants?.[0]
-    const price = variant?.prices?.[0]
-    const priceFormatted = price ? formatPrice(price.amount, price.currency_code) : "Precio no disponible"
+  const gradients = [
+    "bg-gradient-to-br from-orange-400 to-orange-600",
+    "bg-gradient-to-br from-blue-100 to-blue-200",
+    "bg-gradient-to-br from-purple-200 to-pink-200",
+    "bg-gradient-to-br from-blue-500 to-indigo-700",
+    "bg-gradient-to-br from-slate-400 to-slate-600",
+    "bg-gradient-to-br from-cyan-100 to-cyan-200",
+  ]
 
-    // Generate gradient colors based on index
-    const gradients = [
-      "bg-gradient-to-br from-orange-400 to-orange-600",
-      "bg-gradient-to-br from-blue-100 to-blue-200",
-      "bg-gradient-to-br from-purple-200 to-pink-200",
-      "bg-gradient-to-br from-blue-500 to-indigo-700",
-      "bg-gradient-to-br from-slate-400 to-slate-600",
-      "bg-gradient-to-br from-cyan-100 to-cyan-200",
-    ]
-
-    return {
-      id: index + 1,
-      name: product.title,
-      description: product.description || "",
-      price: `Desde ${priceFormatted}`,
-      specs: variant?.title || "Ver especificaciones",
-      color: gradients[index % gradients.length],
-      lightColor: index % 2 === 0,
-      handle: product.handle,
-    }
-  })
-
-  const models = medusaProducts.map((product) => ({
-    name: product.title,
-    shortName: product.title.split(" ").slice(-1)[0], // Take last word as short name
+  const products = categoryProducts.map((product, index) => ({
+    id: index + 1,
+    name: product.name,
+    description: product.description,
+    price: `Desde ${formatPrice(product.price)}`,
+    specs: product.specifications[0]?.value ?? "Ver especificaciones",
+    color: gradients[index % gradients.length],
+    lightColor: index % 2 === 0,
+    handle: product.id,
   }))
 
-  // Default features (you can customize these per category if needed)
+  const models = categoryProducts.map((product) => ({
+    name: product.name,
+    shortName: product.name.split(" ").slice(-1)[0],
+  }))
+
+  const allCategories = await getCategories()
+
   const features = [
-    {
-      id: 1,
-      title: "Especificaciones y duración",
-      description: "Descubre los detalles técnicos",
-      icon: "📋",
-    },
-    {
-      id: 2,
-      title: "Diseño premium",
-      description: "Calidad y elegancia en cada detalle",
-      icon: "✨",
-    },
-    {
-      id: 3,
-      title: "Rendimiento excepcional",
-      description: "Potencia para todo lo que necesitas",
-      icon: "⚡",
-    },
-    {
-      id: 4,
-      title: "Tecnología avanzada",
-      description: "Lo último en innovación",
-      icon: "🚀",
-    },
+    { id: 1, title: "Especificaciones y duración", description: "Descubre los detalles técnicos", icon: "📋" },
+    { id: 2, title: "Diseño premium", description: "Calidad y elegancia en cada detalle", icon: "✨" },
+    { id: 3, title: "Rendimiento excepcional", description: "Potencia para todo lo que necesitas", icon: "⚡" },
+    { id: 4, title: "Tecnología avanzada", description: "Lo último en innovación", icon: "🚀" },
   ]
+
+  void allCategories
 
   return (
     <main className="min-h-screen bg-white">
@@ -97,4 +71,11 @@ export default async function CatalogPage({ params }: PageProps) {
       <CatalogFooter />
     </main>
   )
+}
+
+export async function generateStaticParams() {
+  const categories = await getCategories()
+  return categories.map((category) => ({
+    categoria: category.handle,
+  }))
 }
